@@ -36,16 +36,12 @@ frappe.query_reports["General Ledger"] = {
 		{
 			"fieldname":"account",
 			"label": __("Account"),
-			"fieldtype": "Link",
+			"fieldtype": "MultiSelectList",
 			"options": "Account",
-			"get_query": function() {
-				var company = frappe.query_report.get_filter_value('company');
-				return {
-					"doctype": "Account",
-					"filters": {
-						"company": company,
-					}
-				}
+			get_data: function(txt) {
+				return frappe.db.get_link_options('Account', txt, {
+					company: frappe.query_report.get_filter_value("company")
+				});
 			}
 		},
 		{
@@ -62,9 +58,8 @@ frappe.query_reports["General Ledger"] = {
 		{
 			"fieldname":"party_type",
 			"label": __("Party Type"),
-			"fieldtype": "Link",
-			"options": "Party Type",
-			"default": "",
+			"fieldtype": "Autocomplete",
+			options: Object.keys(frappe.boot.party_account_types),
 			on_change: function() {
 				frappe.query_report.set_filter_value('party', "");
 			}
@@ -114,9 +109,26 @@ frappe.query_reports["General Ledger"] = {
 			"fieldname":"group_by",
 			"label": __("Group by"),
 			"fieldtype": "Select",
-			"options": ["", __("Group by Voucher"), __("Group by Voucher (Consolidated)"),
-				__("Group by Account"), __("Group by Party")],
-			"default": __("Group by Voucher (Consolidated)")
+			"options": [
+				"",
+				{
+					label: __("Group by Voucher"),
+					value: "Group by Voucher",
+				},
+				{
+					label: __("Group by Voucher (Consolidated)"),
+					value: "Group by Voucher (Consolidated)",
+				},
+				{
+					label: __("Group by Account"),
+					value: "Group by Account",
+				},
+				{
+					label: __("Group by Party"),
+					value: "Group by Party",
+				},
+			],
+			"default": "Group by Voucher (Consolidated)"
 		},
 		{
 			"fieldname":"tax_id",
@@ -135,7 +147,9 @@ frappe.query_reports["General Ledger"] = {
 			"label": __("Cost Center"),
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
-				return frappe.db.get_link_options('Cost Center', txt);
+				return frappe.db.get_link_options('Cost Center', txt, {
+					company: frappe.query_report.get_filter_value("company")
+				});
 			}
 		},
 		{
@@ -143,14 +157,16 @@ frappe.query_reports["General Ledger"] = {
 			"label": __("Project"),
 			"fieldtype": "MultiSelectList",
 			get_data: function(txt) {
-				return frappe.db.get_link_options('Project', txt);
+				return frappe.db.get_link_options('Project', txt, {
+					company: frappe.query_report.get_filter_value("company")
+				});
 			}
 		},
 		{
 			"fieldname": "include_dimensions",
 			"label": __("Consider Accounting Dimensions"),
 			"fieldtype": "Check",
-			"default": 0
+			"default": 1
 		},
 		{
 			"fieldname": "show_opening_entries",
@@ -160,15 +176,25 @@ frappe.query_reports["General Ledger"] = {
 		{
 			"fieldname": "include_default_book_entries",
 			"label": __("Include Default Book Entries"),
-			"fieldtype": "Check"
+			"fieldtype": "Check",
+			"default": 1
 		},
 		{
 			"fieldname": "show_cancelled_entries",
 			"label": __("Show Cancelled Entries"),
+			"fieldtype": "Check"
+		},
+		{
+			"fieldname": "show_net_values_in_party_account",
+			"label": __("Show Net Values in Party Account"),
+			"fieldtype": "Check"
+		},
+		{
+			"fieldname": "add_values_in_transaction_currency",
+			"label": __("Add Columns in Transaction Currency"),
 			"fieldtype": "Check"
 		}
 	]
 }
 
 erpnext.utils.add_dimensions('General Ledger', 15)
-

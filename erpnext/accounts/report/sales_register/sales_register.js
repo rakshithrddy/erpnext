@@ -64,9 +64,14 @@ frappe.query_reports["Sales Register"] = {
 			"label": __("Item Group"),
 			"fieldtype": "Link",
 			"options": "Item Group"
+		},
+		{
+			"fieldname": "include_payments",
+			"label": __("Show Ledger View"),
+			"fieldtype": "Check",
+			"default": 0
 		}
 	]
 }
 
 erpnext.utils.add_dimensions('Sales Register', 7);
-

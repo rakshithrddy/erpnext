@@ -8,6 +8,7 @@
   "finance_book",
   "depreciation_method",
   "total_number_of_depreciations",
+  "daily_depreciation",
   "column_break_5",
   "frequency_of_depreciation",
   "depreciation_start_date",
@@ -17,6 +18,7 @@
  ],
  "fields": [
   {
+   "columns": 2,
    "fieldname": "finance_book",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -32,6 +34,7 @@
    "reqd": 1
   },
   {
+   "columns": 2,
    "fieldname": "total_number_of_depreciations",
    "fieldtype": "Int",
    "in_list_view": 1,
@@ -43,6 +46,7 @@
    "fieldtype": "Column Break"
   },
   {
+   "columns": 2,
    "fieldname": "frequency_of_depreciation",
    "fieldtype": "Int",
    "in_list_view": 1,
@@ -57,6 +61,7 @@
    "mandatory_depends_on": "eval:parent.doctype == 'Asset'"
   },
   {
+   "columns": 1,
    "default": "0",
    "depends_on": "eval:parent.doctype == 'Asset'",
    "fieldname": "expected_value_after_useful_life",
@@ -67,7 +72,6 @@
   {
    "fieldname": "value_after_depreciation",
    "fieldtype": "Currency",
-   "hidden": 1,
    "label": "Value After Depreciation",
    "no_copy": 1,
    "options": "Company:company:default_currency",
@@ -80,12 +84,19 @@
    "fieldname": "rate_of_depreciation",
    "fieldtype": "Percent",
    "label": "Rate of Depreciation"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.depreciation_method == \"Straight Line\" || doc.depreciation_method == \"Manual\"",
+   "fieldname": "daily_depreciation",
+   "fieldtype": "Check",
+   "label": "Daily Depreciation"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2020-11-05 16:30:09.213479",
+ "modified": "2023-08-10 22:10:36.576199",
  "modified_by": "Administrator",
  "module": "Assets",
  "name": "Asset Finance Book",
@@ -94,5 +105,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

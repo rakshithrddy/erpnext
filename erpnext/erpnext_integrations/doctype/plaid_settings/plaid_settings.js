@@ -16,6 +16,10 @@ frappe.ui.form.on('Plaid Settings', {
 				new erpnext.integrations.plaidLink(frm);
 			});
 
+			frm.add_custom_button(__('Reset Plaid Link'), () => {
+				new erpnext.integrations.plaidLink(frm);
+			});
+
 			frm.add_custom_button(__("Sync Now"), () => {
 				frappe.call({
 					method: "erpnext.erpnext_integrations.doctype.plaid_settings.plaid_settings.enqueue_synchronization",
@@ -43,7 +47,7 @@ erpnext.integrations.plaidLink = class plaidLink {
 	}
 
 	async init_config() {
-		this.product = ["auth", "transactions"];
+		this.product = ["transactions"];
 		this.plaid_env = this.frm.doc.plaid_env;
 		this.client_name = frappe.boot.sitename;
 		this.token = await this.get_link_token();
@@ -92,7 +96,7 @@ erpnext.integrations.plaidLink = class plaidLink {
 	}
 
 	onScriptLoaded(me) {
-		me.linkHandler = Plaid.create({
+		me.linkHandler = Plaid.create({ // eslint-disable-line no-undef
 			clientName: me.client_name,
 			product: me.product,
 			env: me.plaid_env,

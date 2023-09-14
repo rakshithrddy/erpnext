@@ -9,43 +9,70 @@
   "naming_series",
   "work_order",
   "bom_no",
-  "workstation",
-  "operation",
-  "operation_row_number",
+  "production_item",
+  "employee",
   "column_break_4",
   "posting_date",
   "company",
-  "remarks",
-  "production_section",
-  "production_item",
-  "item_name",
   "for_quantity",
-  "quality_inspection",
-  "wip_warehouse",
-  "column_break_12",
-  "employee",
-  "employee_name",
-  "status",
-  "project",
+  "total_completed_qty",
+  "process_loss_qty",
+  "scheduled_time_section",
+  "expected_start_date",
+  "time_required",
+  "column_break_jkir",
+  "expected_end_date",
+  "section_break_05am",
+  "scheduled_time_logs",
   "timing_detail",
   "time_logs",
   "section_break_13",
-  "total_completed_qty",
+  "actual_start_date",
   "total_time_in_mins",
   "column_break_15",
+  "actual_end_date",
+  "production_section",
+  "operation",
+  "wip_warehouse",
+  "column_break_12",
+  "workstation_type",
+  "workstation",
+  "quality_inspection_section",
+  "quality_inspection_template",
+  "column_break_fcmp",
+  "quality_inspection",
+  "section_break_21",
+  "sub_operations",
   "section_break_8",
   "items",
+  "scrap_items_section",
+  "scrap_items",
+  "corrective_operation_section",
+  "for_job_card",
+  "is_corrective_job_card",
+  "column_break_33",
+  "hour_rate",
+  "for_operation",
   "more_information",
-  "operation_id",
-  "sequence_id",
+  "project",
+  "item_name",
   "transferred_qty",
   "requested_qty",
+  "status",
   "column_break_20",
+  "operation_row_number",
+  "operation_id",
+  "sequence_id",
+  "remarks",
+  "serial_and_batch_bundle",
+  "batch_no",
+  "serial_no",
   "barcode",
   "job_started",
   "started_time",
   "current_time",
-  "amended_from"
+  "amended_from",
+  "connections_tab"
  ],
  "fields": [
   {
@@ -115,14 +142,7 @@
   {
    "fieldname": "timing_detail",
    "fieldtype": "Section Break",
-   "label": "Timing Detail"
-  },
-  {
-   "fieldname": "employee",
-   "fieldtype": "Link",
-   "in_standard_filter": 1,
-   "label": "Employee",
-   "options": "Employee"
+   "label": "Actual Time"
   },
   {
    "allow_bulk_edit": 1,
@@ -133,9 +153,11 @@
   },
   {
    "fieldname": "section_break_13",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "hide_border": 1
   },
   {
+   "default": "0",
    "fieldname": "total_completed_qty",
    "fieldtype": "Float",
    "label": "Total Completed Qty",
@@ -153,20 +175,19 @@
   },
   {
    "fieldname": "section_break_8",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "Raw Materials"
   },
   {
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Items",
-   "options": "Job Card Item",
-   "read_only": 1
+   "options": "Job Card Item"
   },
   {
    "collapsible": 1,
    "fieldname": "more_information",
-   "fieldtype": "Section Break",
+   "fieldtype": "Tab Break",
    "label": "More Information"
   },
   {
@@ -180,7 +201,7 @@
    "default": "0",
    "fieldname": "transferred_qty",
    "fieldtype": "Float",
-   "label": "Transferred Qty",
+   "label": "FG Qty from Transferred Raw Materials",
    "read_only": 1
   },
   {
@@ -251,15 +272,9 @@
    "reqd": 1
   },
   {
-   "fetch_from": "employee.employee_name",
-   "fieldname": "employee_name",
-   "fieldtype": "Read Only",
-   "label": "Employee Name"
-  },
-  {
    "fieldname": "production_section",
-   "fieldtype": "Section Break",
-   "label": "Production"
+   "fieldtype": "Tab Break",
+   "label": "Operation & Workstation"
   },
   {
    "fieldname": "column_break_12",
@@ -314,14 +329,193 @@
    "label": "Quality Inspection",
    "no_copy": 1,
    "options": "Quality Inspection"
+  },
+  {
+   "allow_bulk_edit": 1,
+   "fieldname": "sub_operations",
+   "fieldtype": "Table",
+   "label": "Sub Operations",
+   "options": "Job Card Operation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Tab Break",
+   "hide_border": 1,
+   "label": "Sub Operations"
+  },
+  {
+   "depends_on": "is_corrective_job_card",
+   "fieldname": "hour_rate",
+   "fieldtype": "Currency",
+   "label": "Hour Rate"
+  },
+  {
+   "collapsible": 1,
+   "depends_on": "is_corrective_job_card",
+   "fieldname": "corrective_operation_section",
+   "fieldtype": "Tab Break",
+   "label": "Corrective Operation"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_corrective_job_card",
+   "fieldtype": "Check",
+   "label": "Is Corrective Job Card",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_33",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "for_job_card",
+   "fieldtype": "Link",
+   "label": "For Job Card",
+   "options": "Job Card",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "for_job_card.operation",
+   "fetch_if_empty": 1,
+   "fieldname": "for_operation",
+   "fieldtype": "Link",
+   "label": "For Operation",
+   "options": "Operation"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Table MultiSelect",
+   "label": "Employee",
+   "options": "Job Card Time Log"
+  },
+  {
+   "fieldname": "serial_no",
+   "fieldtype": "Small Text",
+   "hidden": 1,
+   "label": "Serial No",
+   "read_only": 1
+  },
+  {
+   "fieldname": "batch_no",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Batch No",
+   "options": "Batch",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "scrap_items_section",
+   "fieldtype": "Tab Break",
+   "label": "Scrap Items"
+  },
+  {
+   "fieldname": "scrap_items",
+   "fieldtype": "Table",
+   "label": "Scrap Items",
+   "no_copy": 1,
+   "options": "Job Card Scrap Item",
+   "print_hide": 1
+  },
+  {
+   "fetch_from": "operation.quality_inspection_template",
+   "fieldname": "quality_inspection_template",
+   "fieldtype": "Link",
+   "label": "Quality Inspection Template",
+   "options": "Quality Inspection Template"
+  },
+  {
+   "fieldname": "workstation_type",
+   "fieldtype": "Link",
+   "label": "Workstation Type",
+   "options": "Workstation Type"
+  },
+  {
+   "fieldname": "expected_start_date",
+   "fieldtype": "Datetime",
+   "label": "Expected Start Date"
+  },
+  {
+   "fieldname": "expected_end_date",
+   "fieldtype": "Datetime",
+   "label": "Expected End Date"
+  },
+  {
+   "fieldname": "serial_and_batch_bundle",
+   "fieldtype": "Link",
+   "label": "Serial and Batch Bundle",
+   "no_copy": 1,
+   "options": "Serial and Batch Bundle",
+   "print_hide": 1
+  },
+  {
+   "depends_on": "process_loss_qty",
+   "fieldname": "process_loss_qty",
+   "fieldtype": "Float",
+   "label": "Process Loss Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "connections_tab",
+   "fieldtype": "Tab Break",
+   "label": "Connections",
+   "show_dashboard": 1
+  },
+  {
+   "fieldname": "scheduled_time_section",
+   "fieldtype": "Section Break",
+   "label": "Scheduled Time"
+  },
+  {
+   "fieldname": "column_break_jkir",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "time_required",
+   "fieldtype": "Float",
+   "label": "Expected Time Required (In Mins)"
+  },
+  {
+   "fieldname": "section_break_05am",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "scheduled_time_logs",
+   "fieldtype": "Table",
+   "label": "Scheduled Time Logs",
+   "options": "Job Card Scheduled Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_start_date",
+   "fieldtype": "Datetime",
+   "label": "Actual Start Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_end_date",
+   "fieldtype": "Datetime",
+   "label": "Actual End Date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "quality_inspection_section",
+   "fieldtype": "Section Break",
+   "label": "Quality Inspection"
+  },
+  {
+   "fieldname": "column_break_fcmp",
+   "fieldtype": "Column Break"
   }
  ],
  "is_submittable": 1,
  "links": [],
- "modified": "2020-11-19 18:26:50.531664",
+ "modified": "2023-06-28 19:23:14.345214",
  "modified_by": "Administrator",
  "module": "Manufacturing",
  "name": "Job Card",
+ "naming_rule": "By \"Naming Series\" field",
  "owner": "Administrator",
  "permissions": [
   {
@@ -372,6 +566,7 @@
  ],
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "operation",
  "track_changes": 1
 }

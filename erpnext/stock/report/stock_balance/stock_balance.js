@@ -53,13 +53,14 @@ frappe.query_reports["Stock Balance"] = {
 			"width": "80",
 			"options": "Warehouse",
 			get_query: () => {
-				var warehouse_type = frappe.query_report.get_filter_value('warehouse_type');
-				if(warehouse_type){
-					return {
-						filters: {
-							'warehouse_type': warehouse_type
-						}
-					};
+				let warehouse_type = frappe.query_report.get_filter_value("warehouse_type");
+				let company = frappe.query_report.get_filter_value("company");
+
+				return {
+					filters: {
+						...warehouse_type && {warehouse_type},
+						...company && {company}
+					}
 				}
 			}
 		},
@@ -69,6 +70,14 @@ frappe.query_reports["Stock Balance"] = {
 			"fieldtype": "Link",
 			"width": "80",
 			"options": "Warehouse Type"
+		},
+		{
+			"fieldname": "valuation_field_type",
+			"label": __("Valuation Field Type"),
+			"fieldtype": "Select",
+			"width": "80",
+			"options": "Currency\nFloat",
+			"default": "Currency"
 		},
 		{
 			"fieldname":"include_uom",
@@ -86,6 +95,12 @@ frappe.query_reports["Stock Balance"] = {
 			"label": __('Show Stock Ageing Data'),
 			"fieldtype": 'Check'
 		},
+		{
+			"fieldname": 'ignore_closing_balance',
+			"label": __('Ignore Closing Balance'),
+			"fieldtype": 'Check',
+			"default": 1
+		},
 	],
 
 	"formatter": function (value, row, column, data, default_formatter) {
@@ -101,3 +116,5 @@ frappe.query_reports["Stock Balance"] = {
 		return value;
 	}
 };
+
+erpnext.utils.add_inventory_dimensions('Stock Balance', 8);
